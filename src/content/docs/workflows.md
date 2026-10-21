@@ -4,7 +4,7 @@ description: "Build, test, and publish Myotus locally using the matching Minecra
 ---
 
 :::note[Source snapshot]
-This reference follows the public Myotus source at [`e7cfa3a`](https://github.com/mc-myo-s-mod/Myotus/tree/e7cfa3aaed345a351ab5d468f7d5f0f8b0e40b51). Newer local changes, including the terminal module API, are not covered. [Check the version scope](/myotus-wiki/about/).
+The SSEC command sections reflect the local source as of 2026-10-21. Other sections follow the public Myotus source at [`e7cfa3a`](https://github.com/mc-myo-s-mod/Myotus/tree/e7cfa3aaed345a351ab5d468f7d5f0f8b0e40b51) and do not cover newer local APIs, including terminal modules. [Check the version scope](/myotus-wiki/about/).
 :::
 
 These are Windows wrapper invocations. Use Java 17 for Forge 1.20.1, Java 21 for NeoForge 1.21.1, and Java 25 for NeoForge 26.1.2. Keep `GRADLE_USER_HOME` on your existing cache; do not start offline until mapped Minecraft/dependency artifacts are present.
@@ -86,7 +86,7 @@ then removes its own fixtures. Run it with the build's JDK configured:
 ```
 
 - `compileJava`: Java signatures and dependency compatibility at compile time.
-- `test`: configured JVM tests, including [shared XP math](https://github.com/mc-myo-s-mod/Myotus/blob/e7cfa3aaed345a351ab5d468f7d5f0f8b0e40b51/common/src/test/java/me/myogoo/myotus/api/experience/ExperienceMathTest.java), [integration state](https://github.com/mc-myo-s-mod/Myotus/blob/e7cfa3aaed345a351ab5d468f7d5f0f8b0e40b51/common/src/test/java/me/myogoo/myotus/util/mod/ModIntegrationManagerTest.java), and loader `CommandsApiTest`/`ExperienceApiExtractionTest` classes.
+- `test`: configured JVM tests, including [shared XP math](https://github.com/mc-myo-s-mod/Myotus/blob/e7cfa3aaed345a351ab5d468f7d5f0f8b0e40b51/common/src/test/java/me/myogoo/myotus/api/experience/ExperienceMathTest.java), [integration state](https://github.com/mc-myo-s-mod/Myotus/blob/e7cfa3aaed345a351ab5d468f7d5f0f8b0e40b51/common/src/test/java/me/myogoo/myotus/util/mod/ModIntegrationManagerTest.java), and loader `CommandDiscoveryTest`/`ExperienceApiExtractionTest` classes and SSEC command-library tests.
 - `build`: compilation, configured tests, resource processing, and packaging; not an in-game test.
 - `runGameTestServer`: registered in-game checks, such as [Forge XP/terminal tests](https://github.com/mc-myo-s-mod/Myotus/blob/e7cfa3aaed345a351ab5d468f7d5f0f8b0e40b51/forge-1-20-1/src/main/java/me/myogoo/myotus/gametest/MyoExperienceGameTests.java), [1.21.1 tests](https://github.com/mc-myo-s-mod/Myotus/blob/e7cfa3aaed345a351ab5d468f7d5f0f8b0e40b51/neoforge-1-21-1/src/main/java/me/myogoo/myotus/gametest/MyoExperienceGameTests.java), and [26.1.2 tests](https://github.com/mc-myo-s-mod/Myotus/blob/e7cfa3aaed345a351ab5d468f7d5f0f8b0e40b51/neoforge-26-1-2/src/main/java/me/myogoo/myotus/gametest/MyoExperienceGameTests.java).
 - `runClient` / `runServer`: startup and side-specific loading. Reaching the title screen or server startup does not verify card behavior, recipe transfer, rendering, or performance under a real workload.
