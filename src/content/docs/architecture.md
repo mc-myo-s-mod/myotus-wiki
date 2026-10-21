@@ -4,7 +4,7 @@ description: "Understand Myotus build boundaries, initialization order, loader d
 ---
 
 :::note[Source snapshot]
-This reference follows the public Myotus source at [`e7cfa3a`](https://github.com/mc-myo-s-mod/Myotus/tree/e7cfa3aaed345a351ab5d468f7d5f0f8b0e40b51). Newer local changes, including the terminal module API, are not covered. [Check the version scope](/myotus-wiki/about/).
+The SSEC command sections reflect the local source as of 2026-10-21. Other sections follow the public Myotus source at [`e7cfa3a`](https://github.com/mc-myo-s-mod/Myotus/tree/e7cfa3aaed345a351ab5d468f7d5f0f8b0e40b51) and do not cover newer local APIs, including terminal modules. [Check the version scope](/myotus-wiki/about/).
 :::
 
 ## Build boundaries
@@ -27,7 +27,7 @@ The governing configuration is [root build.gradle](https://github.com/mc-myo-s-m
 1. Each loader's `Myotus` constructor installs `MyotusAPIImpl.INSTANCE` with `_setInstance`. This is an internal, one-time hook; addons must not call it.
 2. Myotus supplies annotation scan data and the loader mod list to integration discovery. Forge's `integrations()` also initializes this through its guarded initializer; NeoForge initializes it from the mod constructor.
 3. Addons register creative-tab contributions after Myotus initialization, client config tabs from client setup, and command adapters before the loader's command-registration event.
-4. Myotus scans `@MyoCommand` classes on `RegisterCommandsEvent`. Creative-tab suppliers run when the tab is populated. Terminal card callbacks run from the server menu update/close flow.
+4. Myotus scans `@SSCommand` classes on `RegisterCommandsEvent`. Creative-tab suppliers run when the tab is populated. Terminal card callbacks run from the server menu update/close flow.
 
 `get()`, `configTabs()`, `creativeTabs()`, and Forge `network()` need the installed API instance. `isInitialized()` only checks that instance; it does not mean every addon has completed registration. `tryGet()` is a snapshot, not a lifecycle event. Static singleton access is not proof that loader discovery has finished.
 

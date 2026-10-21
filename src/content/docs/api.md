@@ -4,10 +4,10 @@ description: "Source-linked contracts for Myotus integrations, terminal upgrades
 ---
 
 :::note[Source snapshot]
-This reference follows the public Myotus source at [`e7cfa3a`](https://github.com/mc-myo-s-mod/Myotus/tree/e7cfa3aaed345a351ab5d468f7d5f0f8b0e40b51). Newer local changes, including the terminal module API, are not covered. [Check the version scope](/myotus-wiki/about/).
+The SSEC command sections reflect the local source as of 2026-10-21. Other sections follow the public Myotus source at [`e7cfa3a`](https://github.com/mc-myo-s-mod/Myotus/tree/e7cfa3aaed345a351ab5d468f7d5f0f8b0e40b51) and do not cover newer local APIs, including terminal modules. [Check the version scope](/myotus-wiki/about/).
 :::
 
-This page follows the source, not older facade names. `IntegrationsApi`, `TerminalUpgradesApi`, `CommandsApi`, and `ExperienceApi` are nested classes of `MyotusAPI`. There is no public `TerminalUpgradeFacade` or `ExperienceFacade` in this checkout.
+This page follows the source, not older facade names. `IntegrationsApi`, `TerminalUpgradesApi`, and `ExperienceApi` are nested classes of `MyotusAPI`. There is no public `TerminalUpgradeFacade` or `ExperienceFacade` in this checkout.
 
 Sources: [Forge MyotusAPI](https://github.com/mc-myo-s-mod/Myotus/blob/e7cfa3aaed345a351ab5d468f7d5f0f8b0e40b51/forge-1-20-1/src/main/java/me/myogoo/myotus/api/MyotusAPI.java), [NeoForge 1.21.1 MyotusAPI](https://github.com/mc-myo-s-mod/Myotus/blob/e7cfa3aaed345a351ab5d468f7d5f0f8b0e40b51/neoforge-1-21-1/src/main/java/me/myogoo/myotus/api/MyotusAPI.java), [NeoForge 26.1.2 MyotusAPI](https://github.com/mc-myo-s-mod/Myotus/blob/e7cfa3aaed345a351ab5d468f7d5f0f8b0e40b51/neoforge-26-1-2/src/main/java/me/myogoo/myotus/api/MyotusAPI.java).
 
@@ -241,17 +241,17 @@ Sources: [ExperienceMath](https://github.com/mc-myo-s-mod/Myotus/blob/e7cfa3aaed
 
 ## Commands
 
-Myotus discovers `@MyoCommand` classes during the loader's `RegisterCommandsEvent`. `@MyoExecute` methods must be static. Context parameters (`CommandSourceStack` or `CommandContext<CommandSourceStack>`) are injected; other parameters need `@MyoArgument`.
+On all three version lines, Myotus embeds SSEC and discovers `@SSCommand` classes during the loader's `RegisterCommandsEvent`. `@SSCExecute` methods must be static. Context parameters (`CommandSourceStack` or `CommandContext<CommandSourceStack>`) are injected; other parameters need `@SSCArgument`.
 
 ```java
-import me.myogoo.myotus.api.annotation.commands.MyoCommand;
-import me.myogoo.myotus.api.annotation.commands.MyoExecute;
+import me.myogoo.ssec.api.command.SSCommand;
+import me.myogoo.ssec.api.command.SSCExecute;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.network.chat.Component;
 
-@MyoCommand("example_status")
+@SSCommand("example_status")
 public final class ExampleStatusCommand {
-    @MyoExecute
+    @SSCExecute
     public static int execute(CommandSourceStack source) {
         source.sendSuccess(() -> Component.literal("Example integration is ready"), false);
         return 1;
@@ -259,13 +259,13 @@ public final class ExampleStatusCommand {
 }
 ```
 
-`@MyoCommand(parent = ParentCommand.class)` attaches subcommands. `@MyoExecute("path")` adds an execution path and `@MyoAlias` declares aliases. Class-level `@MyoDebug` excludes a command outside dev mode; although the annotation can target methods, the command registrar currently filters classes only. Use unique literals and explicit permissions for mutations.
+`@SSCommand(parent = ParentCommand.class)` attaches subcommands. `@SSCExecute("path")` adds an execution path and `@SSCAlias` declares aliases. Class-level `@SSECDebug` excludes a command outside dev mode; the command registrar filters classes only. Use unique literals and explicit permissions for mutations.
 
-Built-in adapters cover `int`/`Integer`, `double`/`Double`, `float`/`Float`, `boolean`/`Boolean`, `String`, `Entity`, and `ServerPlayer`. Other exact parameter types need `MyotusAPI.commands().registerArgument(Value.class, adapter)` before the command tree is built. `MyoArgumentAdapter<T>` supplies `ArgumentType<?> argumentType()` and `T value(CommandContext<CommandSourceStack>, String) throws Exception`. Duplicate type registration throws; subclass matching is not automatic, and this hook does not register a custom Brigadier argument serializer with Minecraft.
+Built-in adapters cover `int`/`Integer`, `double`/`Double`, `float`/`Float`, `boolean`/`Boolean`, `String`, `Entity`, and `ServerPlayer`. Additional exact parameter types can be registered with `CommandRegistrar.registerAdapter(Value.class, adapter)` before the command tree is built. `SSCArgumentAdapter<T>` supplies `ArgumentType<?> argumentType(CommandBuildContext)` and `T value(CommandContext<CommandSourceStack>, String) throws Exception`. Registering an adapter replaces the existing mapping for that exact type; subclass matching is not automatic, and this hook does not register a custom Brigadier argument serializer with Minecraft.
 
-`@MyoPermission(permission = MyoPermissionLevel.GAME_MASTER)` requires the corresponding command permission. Levels are `MODERATOR` (1), `GAME_MASTER` (2), `ADMIN` (3), and `OWNER` (4). Alternatively use `custom = Checker.class` where a public no-argument checker implements `MyoPermissionChecker`. Set exactly one requirement; empty/conflicting declarations fail closed. Class-level `propagate = true` applies to descendant nodes; otherwise it protects that class's executors.
+`@SSCPermission(permission = PermissionLevel.GAME_MASTER)` requires the corresponding command permission. Levels are `MODERATOR` (1), `GAME_MASTER` (2), `ADMIN` (3), and `OWNER` (4). Alternatively use `custom = Checker.class` where a public no-argument checker implements `SSCPermissionChecker`. Set exactly one requirement; empty/conflicting declarations fail closed. Class-level `propagate = true` applies to descendant nodes; otherwise it protects that class's executors.
 
-Sources: [annotations](https://github.com/mc-myo-s-mod/Myotus/tree/e7cfa3aaed345a351ab5d468f7d5f0f8b0e40b51/common/src/main/java/me/myogoo/myotus/api/annotation/commands), [argument API](https://github.com/mc-myo-s-mod/Myotus/blob/e7cfa3aaed345a351ab5d468f7d5f0f8b0e40b51/neoforge-1-21-1/src/main/java/me/myogoo/myotus/api/command/argument/MyoArgumentAdapter.java), [command tests](https://github.com/mc-myo-s-mod/Myotus/blob/e7cfa3aaed345a351ab5d468f7d5f0f8b0e40b51/neoforge-1-21-1/src/test/java/me/myogoo/myotus/api/CommandsApiTest.java).
+Sources: the [SSECLib repository](https://github.com/mc-myo-s-mod/SSECLib), particularly `common/src/main/java/me/myogoo/ssec/api/command` and `common/src/main/java/me/myogoo/ssec/command`. Command registration, aliases, and permission behavior are covered by `common/src/test/java/me/myogoo/ssec/command/CommandRegistrarTest.java`.
 
 ## Table recipe adapters
 
